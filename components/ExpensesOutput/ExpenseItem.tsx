@@ -1,0 +1,85 @@
+import React from 'react';
+
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+import { RootStackParamList } from '../../App';
+import { GlobalStyles } from '../../constants/styles';
+import { getFormatterDate } from '../../util/date';
+
+interface ExpenseItemProps {
+	description: string;
+	amount: number;
+	date: Date;
+	id: string;
+}
+
+type homeScreenProp = StackNavigationProp<RootStackParamList>;
+
+const ExpenseItem = ({ description, amount, date, id }: ExpenseItemProps) => {
+	const navigation = useNavigation<homeScreenProp>();
+	function expensePressHandler() {
+		navigation.navigate('ManageExpenses', { expenseId: id });
+	}
+
+	return (
+		<Pressable
+			style={({ pressed }) => pressed && styles.pressed}
+			onPress={expensePressHandler}
+		>
+			<View style={styles.expenseItem}>
+				<View>
+					<Text style={[styles.textBase, styles.description]}>
+						{description}
+					</Text>
+					<Text style={styles.textBase}>{getFormatterDate(date)}</Text>
+				</View>
+				<View style={styles.amountContainer}>
+					<Text style={styles.amount}>{amount.toFixed(2)}</Text>
+				</View>
+			</View>
+		</Pressable>
+	);
+};
+
+export default ExpenseItem;
+
+const styles = StyleSheet.create({
+	pressed: { opacity: 0.5 },
+	expenseItem: {
+		padding: 12,
+		marginVertical: 8,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		borderRadius: 6,
+		backgroundColor: GlobalStyles.colors.primary500,
+		elevation: 3,
+		shadowColor: GlobalStyles.colors.gray500,
+		shadowRadius: 4,
+		shadowOffset: { width: 1, height: 1 },
+		shadowOpacity: 0.4,
+	},
+	textBase: {
+		color: GlobalStyles.colors.primary50,
+	},
+	description: {
+		fontSize: 16,
+		marginBottom: 4,
+		fontWeight: 'bold',
+	},
+	amountContainer: {
+		paddingHorizontal: 12,
+		paddingVertical: 4,
+		backgroundColor: '#FFF',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 4,
+		minWidth: 70,
+	},
+	amount: {
+		color: GlobalStyles.colors.primary500,
+		fontWeight: 'bold',
+	},
+});
