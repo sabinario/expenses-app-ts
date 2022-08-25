@@ -13,7 +13,7 @@ interface FormProps {
 	onCancel: () => void;
 	onSubmit: (expenseData: Expense) => void;
 	submitButtonLabel: string;
-	defaultValues?: Expense[];
+	defaultValues?: Expense;
 }
 
 const ExpenseForm = ({
@@ -24,15 +24,15 @@ const ExpenseForm = ({
 }: FormProps) => {
 	const [inputs, setInputs] = useState({
 		amount: {
-			value: defaultValues ? defaultValues[0].amount.toString() : '',
+			value: defaultValues ? defaultValues.amount.toString() : '',
 			isValid: true,
 		},
 		date: {
-			value: defaultValues ? defaultValues[0].date : '',
+			value: defaultValues ? defaultValues.date : '',
 			isValid: true,
 		},
 		description: {
-			value: defaultValues ? defaultValues[0].description : '',
+			value: defaultValues ? defaultValues.description : '',
 			isValid: true,
 		},
 	});
@@ -50,7 +50,7 @@ const ExpenseForm = ({
 	function submitHandler() {
 		const expenseData = {
 			amount: parseFloat(inputs.amount.value),
-			date: new Date(inputs.date.value).toJSON(),
+			date: inputs.date.value && new Date(inputs.date.value).toJSON(),
 			description: inputs.description.value,
 		};
 

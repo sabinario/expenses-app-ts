@@ -1,5 +1,6 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 
+import { AxiosError } from 'axios';
 import { StyleSheet, View } from 'react-native';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -7,7 +8,9 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { Expense } from '../components/ExpensesOutput/ExpensesOutput';
 import ExpenseForm from '../components/ManageExpense/ExpenseForm';
+import ErrorOverlay from '../components/UI/ErrorOverlay';
 import IconButton from '../components/UI/IconButton';
+import LoadingOverlay from '../components/UI/LoadingOverlay';
 import { GlobalStyles } from '../constants/styles';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import {
@@ -15,24 +18,45 @@ import {
 	deleteExpense,
 	updateExpense,
 } from '../redux/reducers/expenses';
-import { storeExpense } from '../util/http';
+import {
+	deleteExpenseRemote,
+	storeExpense,
+	updateExpenseRemote,
+} from '../util/http';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ManageExpenses'>;
 
 const ManageExpenseScreen = ({ route, navigation }: Props) => {
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<Error | AxiosError>();
+
 	const expenseId = route.params?.expenseId;
 	const state = useAppSelector((state) => state.expenses);
 	const dispatch = useAppDispatch();
 
-	const selectedExpense: Expense[] = state.expenses.filter(
+	const selectedExpense: Expense = state.expenses.filter(
 		(expense) => expense.id === expenseId
-	);
+	)[0];
 
 	const isEditing = !!expenseId;
 
-	function deleteExpenseHandler() {
-		dispatch(deleteExpense({ id: expenseId as string }));
-		navigation.goBack();
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			title: isEditing ? 'Edit expense' : 'Add expense',
+		});
+	}, [isEditing]);
+
+	async function deleteExpenseHandler() {
+		setIsLoading(true);
+		try {
+			await deleteExpenseRemote(expenseId as string);
+			dispatch(deleteExpense({ id: expenseId as string }));
+			navigation.goBack();
+		} catch (err) {
+			const errors = err as Error | AxiosError;
+			setError(errors);
+			setIsLoading(false);
+		}
 	}
 
 	function cancelHandler() {
@@ -40,20 +64,30 @@ const ManageExpenseScreen = ({ route, navigation }: Props) => {
 	}
 
 	async function confirmHandler(expenseData: Expense) {
-		if (isEditing) {
-			dispatch(updateExpense({ ...expenseData, id: expenseId }));
-		} else {
-			const expenseId = await storeExpense(expenseData);
-			dispatch(addExpense({ ...expenseData, id: expenseId }));
+		setIsLoading(true);
+		try {
+			if (isEditing) {
+				dispatch(updateExpense({ ...expenseData, id: expenseId }));
+				await updateExpenseRemote(expenseId, expenseData);
+			} else {
+				const expenseId = await storeExpense(expenseData);
+				dispatch(addExpense({ ...expenseData, id: expenseId }));
+			}
+			navigation.goBack();
+		} catch (err) {
+			const errors = err as Error | AxiosError;
+			setError(errors);
+			setIsLoading(false);
 		}
-		navigation.goBack();
 	}
 
-	useLayoutEffect(() => {
-		navigation.setOptions({
-			title: isEditing ? 'Edit expense' : 'Add expense',
-		});
-	}, [isEditing]);
+	if (error && !isLoading) {
+		return <ErrorOverlay message={error.message} />;
+	}
+
+	if (isLoading) {
+		return <LoadingOverlay />;
+	}
 
 	return (
 		<View style={styles.container}>

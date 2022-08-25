@@ -28,3 +28,13 @@ export async function fetchExpenses() {
 
 	return expenses;
 }
+
+export function updateExpenseRemote(id: string, expenseData: Expense) {
+	console.log('expenseData: ', expenseData);
+	return axios.put(`${API_URL}/expenses/${id}.json`, expenseData);
+}
+
+export async function deleteExpenseRemote(id: string) {
+	console.log('id: ', id);
+	return axios.delete(`${API_URL}/expenses/${id}.json`);
+}
