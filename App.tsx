@@ -12,7 +12,7 @@ import ManageExpenseScreen from './screens/ManageExpense';
 
 export type RootStackParamList = {
 	ExpensesOverview: undefined;
-	ManageExpenses: { expenseId: string };
+	ManageExpenses: { expenseId: string | undefined };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
