@@ -9,19 +9,19 @@ export const DUMMY_DATA = [
 		id: '308386a7-4ad6-4aca-8454-2e164ca69a0c',
 		description: 'Wine',
 		price: 244,
-		date: '7/11/2022',
+		date: '8/22/2022',
 	},
 	{
 		id: 'db4bceca-fa8a-434f-88cc-6c9ba4724527',
 		description: 'Pasta',
 		price: 198,
-		date: '2/17/2022',
+		date: '8/24/2022',
 	},
 	{
 		id: 'ad8685df-a952-4882-a73a-c2f5b161afce',
 		description: 'Sherbet',
 		price: 49,
-		date: '4/5/2022',
+		date: '8/24/2022',
 	},
 	{
 		id: '8f3ba683-f32f-40e5-8c99-0e5120706444',
@@ -45,7 +45,7 @@ export const DUMMY_DATA = [
 		id: '3bc57e53-e3dc-4eaa-b2fb-9e57f5c07142',
 		description: 'Tea',
 		price: 265,
-		date: '3/11/2022',
+		date: '8/25/2022',
 	},
 	{
 		id: '85f48772-ca24-4f5a-942d-5ac2e46ada3d',

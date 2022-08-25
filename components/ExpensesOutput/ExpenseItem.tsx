@@ -12,7 +12,7 @@ import { getFormatterDate } from '../../util/date';
 interface ExpenseItemProps {
 	description: string;
 	amount: number;
-	date: Date;
+	date: string;
 	id: string;
 }
 
@@ -34,7 +34,9 @@ const ExpenseItem = ({ description, amount, date, id }: ExpenseItemProps) => {
 					<Text style={[styles.textBase, styles.description]}>
 						{description}
 					</Text>
-					<Text style={styles.textBase}>{getFormatterDate(date)}</Text>
+					<Text style={styles.textBase}>
+						{getFormatterDate(new Date(date))}
+					</Text>
 				</View>
 				<View style={styles.amountContainer}>
 					<Text style={styles.amount}>{amount.toFixed(2)}</Text>

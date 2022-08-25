@@ -1,40 +1,47 @@
 import React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { GlobalStyles } from '../../constants/styles';
-import { DUMMY_DATA } from '../../dummy-data';
 import ExpensesList from './ExpensesList';
 import ExpensesSummary from './ExpensesSummary';
 
-export class Expense {
-	constructor(
-		public id: string,
-		public date: Date,
-		public description: string,
-		public amount: number
-	) {}
+export interface Expense {
+	id: string;
+	date: string;
+	description: string;
+	amount: number;
 }
 
-const DUMMY_EXPENSES: Expense[] = DUMMY_DATA.map((data) => {
-	return new Expense(
-		data.id,
-		new Date(data.date),
-		data.description,
-		data.price
-	);
+/* const DUMMY_EXPENSES: Expense[] = DUMMY_DATA.map((data) => {
+	return new Expense({
+		id: data.id,
+		date: new Date(data.date).toISOString(),
+		description: data.description,
+		amount: data.price,
+	});
 });
-
+ */
 interface ExpensesOutputProps {
-	expenses?: Expense[];
+	expenses: Expense[];
 	expensesPeriod: string;
+	fallbackText: string;
 }
 
-const ExpensesOutput = ({ expenses, expensesPeriod }: ExpensesOutputProps) => {
+const ExpensesOutput = ({
+	expenses,
+	expensesPeriod,
+	fallbackText,
+}: ExpensesOutputProps) => {
+	let content = <Text style={styles.infoText}>{fallbackText}</Text>;
+
+	if (expenses.length > 0) {
+		content = <ExpensesList expenses={expenses} />;
+	}
 	return (
 		<View style={styles.rootContainer}>
-			<ExpensesSummary expenses={DUMMY_EXPENSES} periodName={expensesPeriod} />
-			<ExpensesList expenses={DUMMY_EXPENSES} />
+			<ExpensesSummary expenses={expenses} periodName={expensesPeriod} />
+			{content}
 		</View>
 	);
 };
@@ -47,5 +54,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 24,
 		paddingTop: 24,
 		backgroundColor: GlobalStyles.colors.primary700,
+	},
+	infoText: {
+		color: '#FFF',
+		fontSize: 16,
+		textAlign: 'center',
+		marginTop: 32,
 	},
 });
