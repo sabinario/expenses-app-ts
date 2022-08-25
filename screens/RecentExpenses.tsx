@@ -1,20 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { StyleSheet } from 'react-native';
 
 import ExpensesOutput from '../components/ExpensesOutput/ExpensesOutput';
-import { useAppSelector } from '../hooks/reduxHooks';
-import { getDateMinusDays } from '../util/date';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
+import { setExpenses } from '../redux/reducers/expenses';
+import { getDateMinusDays, sortDate } from '../util/date';
+import { fetchExpenses } from '../util/http';
 
 const RecentExpensesScreen = () => {
+	// const [expenses, setExpenses] = useState<Expense[]>([]);
 	const state = useAppSelector((state) => state.expenses);
+	const dispatch = useAppDispatch();
 
-	const recentExpenses = state.expenses.filter((expense) => {
-		const today = new Date();
-		const date7DaysAgo = getDateMinusDays(today, 7);
+	useEffect(() => {
+		async function getExpenses() {
+			const res = await fetchExpenses();
+			// setExpenses(res);
+			dispatch(setExpenses(res));
+		}
+		getExpenses();
+	}, []);
 
-		return new Date(expense.date) > date7DaysAgo;
-	});
+	const recentExpenses = state.expenses
+		.filter((expense) => {
+			const today = new Date();
+			const date7DaysAgo = getDateMinusDays(today, 7);
+
+			return new Date(expense.date) > date7DaysAgo;
+		})
+		.sort(sortDate);
 
 	return (
 		<ExpensesOutput

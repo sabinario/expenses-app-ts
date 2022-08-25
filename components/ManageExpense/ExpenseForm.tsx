@@ -50,7 +50,7 @@ const ExpenseForm = ({
 	function submitHandler() {
 		const expenseData = {
 			amount: parseFloat(inputs.amount.value),
-			date: inputs.date.value,
+			date: new Date(inputs.date.value).toJSON(),
 			description: inputs.description.value,
 		};
 

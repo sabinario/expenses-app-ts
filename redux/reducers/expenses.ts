@@ -1,52 +1,53 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Expense } from '../../components/ExpensesOutput/ExpensesOutput';
-import { DUMMY_DATA } from '../../dummy-data';
 import { RootState } from '../store';
 
-interface PayloadProps {
+/* 
+export interface PayloadProps {
 	description: string;
 	amount: number;
 	date: string;
-	id: string;
-}
+	id?: string;
+} */
 
-interface UpdateProps {
+/* export interface UpdateProps {
 	description?: string;
 	amount?: number;
 	date?: string;
 	id: string;
-}
+} */
 
-const initialState: { expenses: Expense[] } = {
-	expenses: DUMMY_DATA.map((data) => {
-		return {
-			id: data.id,
-			description: data.description,
-			date: data.date,
-			amount: data.price,
-		};
-	}),
+const initialState = {
+	expenses: [] as Expense[],
 };
 
 export const expensesSlice = createSlice({
 	name: 'expenses',
 	initialState,
 	reducers: {
-		addExpense: (state, action: PayloadAction<PayloadProps>) => {
-			const date = new Date(action.payload.date).toISOString();
+		setExpenses: (state, action: PayloadAction<Expense[]>) => {
+			function sortDate(a: Expense, b: Expense) {
+				let dateA = new Date(a.date).getTime();
+				let dateB = new Date(b.date).getTime();
+				return dateA < dateB ? 1 : -1;
+			}
+			const cronological = action.payload.sort(sortDate);
+			state.expenses = cronological;
+		},
+		addExpense: (state, action: PayloadAction<Expense>) => {
+			const date = new Date(action.payload.date).toJSON();
 			state.expenses.push({ ...action.payload, date });
 		},
 		deleteExpense: (state, action: PayloadAction<{ id: string }>) => {
 			const expenseIndex = state.expenses.findIndex(
 				(expense) => expense.id === action.payload.id
 			);
-			console.log('expenseIndex: ', expenseIndex);
 			if (expenseIndex >= 0) {
 				state.expenses.splice(expenseIndex, 1);
 			}
 		},
-		updateExpense: (state, action: PayloadAction<UpdateProps>) => {
+		updateExpense: (state, action: PayloadAction<Expense>) => {
 			const expenseIndex = state.expenses.findIndex(
 				(expense) => expense.id === action.payload.id
 			);
@@ -58,7 +59,7 @@ export const expensesSlice = createSlice({
 	},
 });
 
-export const { addExpense, deleteExpense, updateExpense } =
+export const { addExpense, deleteExpense, updateExpense, setExpenses } =
 	expensesSlice.actions;
 
 export const expenses = (state: RootState) => state.expenses;
