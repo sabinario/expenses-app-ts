@@ -7,10 +7,10 @@ import ExpensesList from './ExpensesList';
 import ExpensesSummary from './ExpensesSummary';
 
 export interface Expense {
-	id: string;
 	date: string;
 	description: string;
 	amount: number;
+	id?: string;
 }
 
 /* const DUMMY_EXPENSES: Expense[] = DUMMY_DATA.map((data) => {

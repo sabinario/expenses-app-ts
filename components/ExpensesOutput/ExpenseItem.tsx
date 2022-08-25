@@ -13,7 +13,7 @@ interface ExpenseItemProps {
 	description: string;
 	amount: number;
 	date: string;
-	id: string;
+	id?: string;
 }
 
 type homeScreenProp = StackNavigationProp<RootStackParamList>;
