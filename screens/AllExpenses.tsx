@@ -21,5 +21,3 @@ const AllExpensesScreen = () => {
 };
 
 export default AllExpensesScreen;
-
-const styles = StyleSheet.create({});

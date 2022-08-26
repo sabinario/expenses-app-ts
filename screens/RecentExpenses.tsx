@@ -59,5 +59,3 @@ const RecentExpensesScreen = () => {
 };
 
 export default RecentExpensesScreen;
-
-const styles = StyleSheet.create({});
